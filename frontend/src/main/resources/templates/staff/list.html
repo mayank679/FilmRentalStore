@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Staff — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Staff</span></h1><p>All staff members</p></div>
+    <a href="/staff/create" class="btn btn-primary">+ Add Staff</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/staff}">
+    <div class="filter-field"><label>Store ID</label><input name="storeId" type="number" th:value="${filterStoreId}" placeholder="1"/></div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="/staff" class="btn btn-ghost">Clear</a>
+    </div>
+  </form>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Username</th><th>Email</th><th>Store ID</th><th>Active</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${staffList == null or staffList.isEmpty()}"><td colspan="8"><div class="empty-state"><p>No staff found.</p></div></td></tr>
+      <tr th:each="s : ${staffList}">
+        <td th:text="${s.staffId}"></td><td th:text="${s.firstName}"></td><td th:text="${s.lastName}"></td>
+        <td th:text="${s.username}"></td><td th:text="${s.email}"></td><td th:text="${s.storeId}"></td>
+        <td th:text="${s.active != null and s.active ? 'Yes' : 'No'}"></td>
+        <td><div class="row-actions">
+          <a class="action-btn view" th:href="@{/staff/{id}(id=${s.staffId})}">View</a>
+          <a class="action-btn edit" th:href="@{/staff/{id}/edit(id=${s.staffId})}">Edit</a>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/staff', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

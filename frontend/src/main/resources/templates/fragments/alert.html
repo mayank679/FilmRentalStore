@@ -1,0 +1,21 @@
+<!-- ═══════════════════════════════════════════════════════════
+     Reusable Toast / Popup Notification Fragment
+     Include in any page:  th:replace="~{fragments/alert :: toasts}"
+     ═══════════════════════════════════════════════════════════ -->
+<div th:fragment="toasts">
+  <div th:if="${successMessage}" id="appToast" class="toast toast-success">
+    <span>&#10003;</span>&nbsp;<span th:text="${successMessage}"></span>
+  </div>
+  <div th:if="${errorMessage}" id="appToast" class="toast toast-error">
+    <span>&#10007;</span>&nbsp;<span th:text="${errorMessage}"></span>
+  </div>
+  <div th:if="${notFoundMessage}" id="appToast" class="toast toast-error">
+    <span>&#10007;</span>&nbsp;<span th:text="${notFoundMessage}"></span>
+  </div>
+  <script>
+    (function () {
+      var t = document.getElementById('appToast');
+      if (t) { setTimeout(function () { t.style.opacity = '0'; }, 3500); }
+    })();
+  </script>
+</div>

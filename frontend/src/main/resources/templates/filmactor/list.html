@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Film Actors — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Film-Actor</span></h1><p>Actor associations per film</p></div>
+    <a href="/filmactors/create" class="btn btn-primary">+ Add Association</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/filmactors}">
+    <div class="filter-field"><label>Film ID</label><input name="filmId" type="number" th:value="${filterFilmId}" placeholder="1"/></div>
+    <div class="filter-field"><label>Actor ID</label><input name="actorId" type="number" th:value="${filterActorId}" placeholder="1"/></div>
+    <div class="filter-actions"><button type="submit" class="btn btn-primary">Filter</button><a href="/filmactors" class="btn btn-ghost">Clear</a></div>
+  </form>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Actor ID</th><th>Film ID</th><th>Last Update</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${#lists.isEmpty(filmactors)}"><td colspan="4"><div class="empty-state"><p>No associations found.</p></div></td></tr>
+      <tr th:each="fa : ${filmactors}">
+        <td th:text="${fa.actorId}"></td>
+        <td th:text="${fa.filmId}"></td>
+        <td th:text="${fa.lastUpdate}"></td>
+        <td><div class="row-actions">
+          <a class="action-btn view" th:href="@{/filmactors/{a}/{f}(a=${fa.actorId},f=${fa.filmId})}">View</a>
+          <a class="action-btn edit" th:href="@{/filmactors/{a}/{f}/edit(a=${fa.actorId},f=${fa.filmId})}">Edit</a>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/filmactors', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

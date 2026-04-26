@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Payments — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    .filter-field.locked input { opacity:.35; pointer-events:none; background:var(--surface); cursor:not-allowed; }
+    .filter-field.locked label { opacity:.4; }
+    .filter-field.active label { color:var(--gold); font-weight:500; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Payments</span></h1>
+      <p th:if="${mode == null}">Select a search mode</p>
+      <p th:if="${mode == 'id'}">GET /api/payment/{id} — Find payment by ID</p>
+      <p th:if="${mode == 'customerId'}">GET /api/payment/customer/{id} — Find by customer</p>
+      <p th:if="${mode == 'staffId'}">GET /api/payment/staff/{id} — Find by staff</p>
+      <p th:if="${mode == 'rentalId'}">GET /api/payment/rental/{id} — Find by rental</p>
+      <p th:if="${mode == 'date'}">GET /api/payment/date/{date} — Find by transaction date</p>
+      <p th:if="${mode == 'customerView'}">GET /api/payment/payment-customer — Payments with customer details</p>
+      <p th:if="${mode == 'staffView'}">GET /api/payment/payment-staff — Payments with staff details</p>
+      <p th:if="${mode == 'rentalView'}">GET /api/payment/payment-rental — Payments with rental details</p>
+    </div>
+    <a href="/payments" class="btn btn-ghost">← All Payments</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/payments/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+    <div th:class="${mode == 'id'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Payment ID</label>
+      <input name="id" type="number" th:value="${searchId}" placeholder="1" th:readonly="${mode != 'id'}"/>
+    </div>
+    <div th:class="${mode == 'customerId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Customer ID</label>
+      <input name="customerId" type="number" th:value="${searchCustomerId}" placeholder="1" th:readonly="${mode != 'customerId'}"/>
+    </div>
+    <div th:class="${mode == 'staffId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Staff ID</label>
+      <input name="staffId" type="number" th:value="${searchStaffId}" placeholder="1" th:readonly="${mode != 'staffId'}"/>
+    </div>
+    <div th:class="${mode == 'rentalId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Rental ID</label>
+      <input name="rentalId" type="number" th:value="${searchRentalId}" placeholder="1" th:readonly="${mode != 'rentalId'}"/>
+    </div>
+    <div th:class="${mode == 'date'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Date</label>
+      <input name="date" type="text" th:value="${searchDate}" placeholder="2005-05-25" th:readonly="${mode != 'date'}"/>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary" th:if="${mode != 'customerView' and mode != 'staffView' and mode != 'rentalView'}">Search</button>
+      <a href="/payments" class="btn btn-ghost">← Payments</a>
+    </div>
+  </form>
+  <div class="card" th:if="${payments != null}">
+    <div class="table-wrap"><table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th th:if="${mode == 'customerView' or mode == 'staffView' or mode == 'rentalView'}">Customer ID</th>
+          <th th:if="${mode == 'customerView' or mode == 'staffView' or mode == 'rentalView'}">Staff ID</th>
+          <th th:if="${mode == 'customerView' or mode == 'staffView' or mode == 'rentalView'}">Rental ID</th>
+          <th th:if="${mode == 'customerView'}">First Name</th>
+          <th th:if="${mode == 'customerView'}">Last Name</th>
+          <th th:if="${mode == 'customerView'}">Email</th>
+          <th th:if="${mode == 'staffView'}">Staff First Name</th>
+          <th th:if="${mode == 'staffView'}">Staff Last Name</th>
+          <th th:if="${mode == 'rentalView'}">Rental Date</th>
+          <th th:if="${mode == 'rentalView'}">Return Date</th>
+          <th>Amount</th>
+          <th>Payment Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(payments)}"><td colspan="10"><div class="empty-state"><p>No results found.</p></div></td></tr>
+        <tr th:each="p : ${payments}">
+          <td th:text="${p.paymentId}"></td>
+          <td th:if="${mode == 'customerView' or mode == 'staffView' or mode == 'rentalView'}" th:text="${p.customerId}"></td>
+          <td th:if="${mode == 'customerView' or mode == 'staffView' or mode == 'rentalView'}" th:text="${p.staffId}"></td>
+          <td th:if="${mode == 'customerView' or mode == 'staffView' or mode == 'rentalView'}" th:text="${p.rentalId}"></td>
+          <td th:if="${mode == 'customerView'}" th:text="${p.customerFirstName}"></td>
+          <td th:if="${mode == 'customerView'}" th:text="${p.customerLastName}"></td>
+          <td th:if="${mode == 'customerView'}" th:text="${p.email}"></td>
+          <td th:if="${mode == 'staffView'}" th:text="${p.staffFirstName}"></td>
+          <td th:if="${mode == 'staffView'}" th:text="${p.staffLastName}"></td>
+          <td th:if="${mode == 'rentalView'}" th:text="${p.rentalDate}"></td>
+          <td th:if="${mode == 'rentalView'}" th:text="${p.returnDate}"></td>
+          <td th:text="${p.amount}"></td>
+          <td th:text="${p.paymentDate}"></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/payments/{id}(id=${p.paymentId})}">View</a>
+            <a class="action-btn edit" th:href="@{/payments/{id}/edit(id=${p.paymentId})}">Edit</a>
+          </div></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div th:replace="~{fragments/pagination :: pagination('/payments/search', ${currentPage}, ${totalPages})}"></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

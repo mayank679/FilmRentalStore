@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Film-Categories — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    .filter-field.locked input,.filter-field.locked select { opacity:.35; pointer-events:none; background:var(--surface); cursor:not-allowed; }
+    .filter-field.locked label { opacity:.4; }
+    .filter-field.active label { color:var(--gold); font-weight:500; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Film-Categories</span></h1>
+      <p th:if="${mode == null}">Select a search mode</p>
+      <p th:if="${mode == 'filmId'}">GET /api/film-categories?filmId= — Get categories for a film</p>
+      <p th:if="${mode == 'categoryId'}">GET /api/film-categories?categoryId= — Get films in a category</p>
+      <p th:if="${mode == 'filmCategoryId'}">GET /api/film-categories/{filmId}/{categoryId} — Specific record</p>
+      <p th:if="${mode == 'categoryFilms'}">GET /api/film-categories/category/{id}/films — All films under category</p>
+      <p th:if="${mode == 'filmCategories'}">GET /api/film-categories/film/{id}/categories — All categories of film</p>
+      <p th:if="${mode == 'categoryRating'}">GET /api/film-categories/category/{id}/rating/{rating} — By category and rating</p>
+    </div>
+    <a href="/filmcategories" class="btn btn-ghost">← Back</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/filmcategories/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+    <div th:class="${mode == 'filmId' or mode == 'filmCategoryId' or mode == 'filmCategories'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Film ID</label>
+      <input name="filmId" type="number" th:value="${searchFilmId}" placeholder="1"
+             th:readonly="${mode != 'filmId' and mode != 'filmCategoryId' and mode != 'filmCategories'}"/>
+    </div>
+    <div th:class="${mode == 'categoryId' or mode == 'filmCategoryId' or mode == 'categoryFilms' or mode == 'categoryRating'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Category ID</label>
+      <input name="categoryId" type="number" th:value="${searchCategoryId}" placeholder="1"
+             th:readonly="${mode != 'categoryId' and mode != 'filmCategoryId' and mode != 'categoryFilms' and mode != 'categoryRating'}"/>
+    </div>
+    <div th:class="${mode == 'categoryRating'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Rating</label>
+      <select name="rating" th:disabled="${mode != 'categoryRating'}">
+        <option value="">Any</option>
+        <option th:selected="${searchRating == 'G'}">G</option>
+        <option th:selected="${searchRating == 'PG'}">PG</option>
+        <option th:selected="${searchRating == 'PG-13'}">PG-13</option>
+        <option th:selected="${searchRating == 'R'}">R</option>
+        <option th:selected="${searchRating == 'NC-17'}">NC-17</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/filmcategories" class="btn btn-ghost">← Film-Categories</a>
+    </div>
+  </form>
+  <div class="card" th:if="${filmcategories != null}">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Film ID</th><th>Category ID</th><th>Last Update</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(filmcategories)}"><td colspan="4"><div class="empty-state"><p>No results found.</p></div></td></tr>
+        <tr th:each="fc : ${filmcategories}">
+          <td th:text="${fc.filmId}"></td><td th:text="${fc.categoryId}"></td><td th:text="${fc.lastUpdate}"></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/filmcategories/{f}/{c}(f=${fc.filmId},c=${fc.categoryId})}">View</a>
+            <a class="action-btn edit" th:href="@{/filmcategories/{f}/{c}/edit(f=${fc.filmId},c=${fc.categoryId})}">Edit</a>
+          </div></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div th:replace="~{fragments/pagination :: pagination('/filmcategories/search', ${currentPage}, ${totalPages})}"></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

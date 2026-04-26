@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Languages — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Languages</span></h1><p>Film languages</p></div>
+    <a href="/languages/create" class="btn btn-primary">+ Add Language</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Name</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${languages == null or languages.isEmpty()}"><td colspan="3"><div class="empty-state"><p>No languages.</p></div></td></tr>
+      <tr th:each="l : ${languages}">
+        <td th:text="${l['id'] != null ? l['id'] : l['languageId']}"></td>
+        <td><span class="badge" th:text="${l.name}"></span></td>
+        <td><div class="row-actions">
+          <a class="action-btn view" th:href="@{/languages/{id}(id=${l['id'] != null ? l['id'] : l['languageId']})}">View</a>
+          <a class="action-btn edit" th:href="@{/languages/{id}/edit(id=${l['id'] != null ? l['id'] : l['languageId']})}">Edit</a>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/languages', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

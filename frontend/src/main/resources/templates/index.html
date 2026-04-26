@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Film Rental Store — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0d0d0f;--surface:#141418;--surface2:#1c1c22;--border:#2a2a35;--gold:#c9a84c;--gold-light:#e2c97e;--gold-dim:#7a6230;--text:#e8e6e0;--text-muted:#7a7870;--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',sans-serif;--radius:6px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-weight:300;font-size:15px;line-height:1.7;min-height:100vh;background-image:radial-gradient(ellipse at 20% 0%,rgba(201,168,76,.05) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(201,168,76,.04) 0%,transparent 60%);}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px}
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:64px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.4);}
+    .navbar-brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;}
+    .navbar-brand svg{width:32px;height:32px;}
+    .navbar-brand span{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--gold);letter-spacing:.04em;}
+    .navbar-brand span em{font-style:normal;color:var(--text);font-weight:400;}
+    .navbar-badge{font-size:.7rem;background:rgba(201,168,76,.12);border:1px solid var(--gold-dim);color:var(--gold);padding:2px 10px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;}
+    .hero{text-align:center;padding:4rem 2rem 2.5rem;position:relative;}
+    .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:60px;background:linear-gradient(to bottom,transparent,var(--gold-dim));}
+    .hero-eyebrow{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;display:flex;align-items:center;justify-content:center;gap:1rem;}
+    .hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:40px;height:1px;background:var(--gold-dim);}
+    .hero h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,3.2rem);font-weight:700;line-height:1.15;color:var(--text);margin-bottom:.8rem;}
+    .hero h1 em{font-style:italic;color:var(--gold);}
+    .hero p{color:var(--text-muted);font-size:.95rem;max-width:500px;margin:0 auto;}
+    .dashboard{max-width:1100px;margin:0 auto;padding:2rem 2rem 5rem;}
+    .section-label{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;color:var(--text-muted);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+    .entity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:3rem;}
+    .entity-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem 1.25rem;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:.6rem;transition:border-color .25s,transform .25s,box-shadow .25s;animation:cardIn .5s both;}
+    .entity-card:hover{border-color:var(--gold-dim);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5);}
+    .entity-icon{width:40px;height:40px;border-radius:8px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center;}
+    .entity-icon svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.8;}
+    .entity-name{font-family:var(--font-display);font-size:1.05rem;font-weight:600;color:var(--text);}
+    .entity-desc{font-size:.75rem;color:var(--text-muted);line-height:1.4;}
+    .entity-arrow{font-size:.7rem;color:var(--gold-dim);margin-top:.2rem;transition:color .2s,transform .2s;}
+    .entity-card:hover .entity-arrow{color:var(--gold-light);transform:translateX(3px);}
+    @keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .entity-card:nth-child(1){animation-delay:.04s}.entity-card:nth-child(2){animation-delay:.08s}.entity-card:nth-child(3){animation-delay:.12s}.entity-card:nth-child(4){animation-delay:.16s}.entity-card:nth-child(5){animation-delay:.20s}.entity-card:nth-child(6){animation-delay:.24s}.entity-card:nth-child(7){animation-delay:.28s}.entity-card:nth-child(8){animation-delay:.32s}.entity-card:nth-child(9){animation-delay:.36s}.entity-card:nth-child(10){animation-delay:.40s}.entity-card:nth-child(11){animation-delay:.44s}.entity-card:nth-child(12){animation-delay:.48s}.entity-card:nth-child(13){animation-delay:.52s}
+    .footer{border-top:1px solid var(--border);padding:1.5rem 2.5rem;display:flex;align-items:center;justify-content:space-between;color:var(--text-muted);font-size:.8rem;}
+    .footer a{color:var(--gold-dim);text-decoration:none;}.footer a:hover{color:var(--gold);}
+    @media(max-width:640px){.navbar{padding:0 1rem}.dashboard{padding:1.5rem 1rem 4rem}.entity-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:.5rem;text-align:center}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/members" class="navbar-brand">
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="16" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="20" cy="20" r="5" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="20" cy="9"  r="2.5" fill="#c9a84c" opacity=".6"/>
+      <circle cx="20" cy="31" r="2.5" fill="#c9a84c" opacity=".6"/>
+      <circle cx="9"  cy="20" r="2.5" fill="#c9a84c" opacity=".6"/>
+      <circle cx="31" cy="20" r="2.5" fill="#c9a84c" opacity=".6"/>
+      <circle cx="13" cy="13" r="2.5" fill="#c9a84c" opacity=".35"/>
+      <circle cx="27" cy="27" r="2.5" fill="#c9a84c" opacity=".35"/>
+      <circle cx="27" cy="13" r="2.5" fill="#c9a84c" opacity=".35"/>
+      <circle cx="13" cy="27" r="2.5" fill="#c9a84c" opacity=".35"/>
+    </svg>
+    <span>Film<em>Rental</em></span>
+  </a>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <a href="/members" style="font-family:var(--font-body);font-size:.78rem;color:var(--gold-dim);text-decoration:none;padding:.35rem .9rem;border:1px solid var(--border);border-radius:6px;transition:color .2s,border-color .2s;letter-spacing:.04em;" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold-dim)';" onmouseout="this.style.color='var(--gold-dim)';this.style.borderColor='var(--border)';">👥 Team</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-eyebrow">Film Rental Store</div>
+  <h1>Manage your <em>entire</em><br/>rental catalogue.</h1>
+  <p>Browse and manage all 16 entities — click any module below to get started.</p>
+</header>
+
+<section class="dashboard">
+  <div class="section-label">Location &amp; Reference</div>
+  <div class="entity-grid">
+
+    <a class="entity-card" href="/countries">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+      <div class="entity-name">Countries</div>
+      <div class="entity-desc">All countries. Browse, add, edit.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/cities">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div class="entity-name">Cities</div>
+      <div class="entity-desc">Cities linked to countries.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/addresses">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      <div class="entity-name">Addresses</div>
+      <div class="entity-desc">Physical addresses with location.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/languages">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><path d="M5 8h14M5 12h6m-6 4h4M3 4h18a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg></div>
+      <div class="entity-name">Languages</div>
+      <div class="entity-desc">Film languages. Add new ones.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+  </div>
+
+  <div class="section-label">Film Catalogue</div>
+  <div class="entity-grid">
+
+    <a class="entity-card" href="/films">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="2" y1="17" x2="7" y2="17"/></svg></div>
+      <div class="entity-name">Films</div>
+      <div class="entity-desc">Full film catalogue with ratings.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/categories">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg></div>
+      <div class="entity-name">Categories</div>
+      <div class="entity-desc">Film genre categories.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/actors">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+      <div class="entity-name">Actors</div>
+      <div class="entity-desc">All actors. Search by name.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/filmtexts">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="entity-name">Film Texts</div>
+      <div class="entity-desc">Title &amp; description search index.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/filmactors">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3 2.7-5.5 6-5.5"/><circle cx="15" cy="8" r="3"/><path d="M13 14.5c3.3 0 6 2.5 6 5.5"/></svg></div>
+      <div class="entity-name">Film-Actor</div>
+      <div class="entity-desc">Actor assignments per film.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/filmcategories">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+      <div class="entity-name">Film-Category</div>
+      <div class="entity-desc">Category assignments per film.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+  </div>
+
+  <div class="section-label">Operations</div>
+  <div class="entity-grid">
+
+    <a class="entity-card" href="/stores">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+      <div class="entity-name">Stores</div>
+      <div class="entity-desc">Store locations &amp; managers.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/staff">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="entity-name">Staff</div>
+      <div class="entity-desc">Staff members by store.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/customers">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+      <div class="entity-name">Customers</div>
+      <div class="entity-desc">Registered customers per store.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/inventory">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+      <div class="entity-name">Inventory</div>
+      <div class="entity-desc">Film copies per store.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/rentals">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <div class="entity-name">Rentals</div>
+      <div class="entity-desc">Rental history &amp; returns.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+    <a class="entity-card" href="/payments">
+      <div class="entity-icon"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+      <div class="entity-name">Payments</div>
+      <div class="entity-desc">Payment records per rental.</div>
+      <div class="entity-arrow">View →</div>
+    </a>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <span>Film Rental Store &copy; 2026</span>
+  <span>UI <code style="color:var(--gold);font-size:.75rem">:8081</code> &rarr; API <code style="color:var(--gold);font-size:.75rem">:8082</code></span>
+</footer>
+
+</body>
+</html>

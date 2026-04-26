@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${country != null} ? 'Edit Country — Film Rental Store' : 'Add Country — Film Rental Store'">Country Form</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <link rel="icon" type="image/svg+xml" th:href="@{/img/logo.svg}"/>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt="Logo"/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <h1 th:if="${country == null}">Add <span>Country</span></h1>
+      <h1 th:if="${country != null}">Edit <span>Country</span></h1>
+      <p th:if="${country == null}">Register a new country in the system</p>
+      <p th:if="${country != null}" th:text="'Editing Country #' + ${country.countryId}"></p>
+    </div>
+    <a href="/countries" class="btn btn-ghost"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back to List</a>
+  </div>
+  <div class="card form-card">
+    <div class="card-body">
+      <!-- CREATE -->
+      <form th:if="${country == null}" action="/countries/save" method="post">
+        <div class="form-group">
+          <label for="country">Country Name <span style="color:var(--red)">*</span></label>
+          <input id="country" name="country" type="text" placeholder="e.g. India" maxlength="50" required/>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save Country</button>
+          <a href="/countries" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+
+      <!-- EDIT -->
+      <form th:if="${country != null}" th:action="@{/countries/{id}/update(id=${country.countryId})}" method="post">
+        <div class="form-group">
+          <label for="country">Country Name <span style="color:var(--red)">*</span></label>
+          <input id="country" name="country" type="text" th:value="${country.country}" maxlength="50" required/>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Update Country</button>
+          <a href="/countries" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span><span>Running on <a href="#">localhost:8082</a></span></footer>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Maven artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Logs
+*.log
+logs/
+
+# Database temporary files
+db/tmp/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Categories — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Categories</span></h1><p>Film categories</p></div>
+    <div style="display:flex;gap:.5rem">
+      <a href="/categories/search" class="btn btn-ghost">Search by ID</a>
+      <a href="/categories/create" class="btn btn-primary">+ Add Category</a>
+    </div>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Name</th><th>Last Update</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${categories == null or categories.isEmpty()}"><td colspan="4"><div class="empty-state"><p>No categories.</p></div></td></tr>
+      <tr th:each="c : ${categories}">
+        <td th:text="${c.categoryId}"></td>
+        <td><span class="badge" th:text="${c.name}"></span></td>
+        <td th:text="${c['lastUpdate']}"></td>
+        <td><div class="row-actions">
+          <a class="action-btn view" th:href="@{/categories/{id}(id=${c.categoryId})}">View</a>
+          <a class="action-btn edit" th:href="@{/categories/{id}/edit(id=${c.categoryId})}">Edit</a>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/categories', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

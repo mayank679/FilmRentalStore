@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Stores — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Stores</span></h1><p>All stores</p></div>
+    <a href="/stores/create" class="btn btn-primary">+ Add Store</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Manager Staff ID</th><th>Address ID</th><th>Last Update</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${stores == null or stores.isEmpty()}"><td colspan="5"><div class="empty-state"><p>No stores.</p></div></td></tr>
+      <tr th:each="s : ${stores}">
+        <td th:text="${s.storeId}"></td><td th:text="${s.managerStaffId}"></td>
+        <td th:text="${s.addressId}"></td><td th:text="${s.lastUpdate}"></td>
+        <td><div class="row-actions">
+          <a class="action-btn view" th:href="@{/stores/{id}(id=${s.storeId})}">View</a>
+          <a class="action-btn edit" th:href="@{/stores/{id}/edit(id=${s.storeId})}">Edit</a>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/stores', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

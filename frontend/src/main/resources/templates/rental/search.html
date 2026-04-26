@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Rentals — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    .filter-field.locked input { opacity:.35; pointer-events:none; background:var(--surface); cursor:not-allowed; }
+    .filter-field.locked label { opacity:.4; }
+    .filter-field.active label { color:var(--gold); font-weight:500; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Rentals</span></h1>
+      <p th:if="${mode == null}">Select a search mode</p>
+      <p th:if="${mode == 'id'}">GET /api/rental/{id} — Find rental by ID</p>
+      <p th:if="${mode == 'customerId'}">GET /api/rental/customer/{id} — By customer</p>
+      <p th:if="${mode == 'staffId'}">GET /api/rental/staff/{id} — By staff</p>
+      <p th:if="${mode == 'inventoryId'}">GET /api/rental/inventory/{id} — By inventory</p>
+      <p th:if="${mode == 'dateRange'}">GET /api/rental/date-range — By rental date range</p>
+      <p th:if="${mode == 'returnDateRange'}">GET /api/rental/return-date-range — By return date range</p>
+      <p th:if="${mode == 'lastUpdateRange'}">GET /api/rental/last-update-range — By last update range</p>
+    </div>
+    <a href="/rentals" class="btn btn-ghost">← Back</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/rentals/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+    <div th:class="${mode == 'id'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Rental ID</label>
+      <input name="id" type="number" th:value="${searchId}" placeholder="1" th:readonly="${mode != 'id'}"/>
+    </div>
+    <div th:class="${mode == 'customerId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Customer ID</label>
+      <input name="customerId" type="number" th:value="${searchCustomerId}" placeholder="1" th:readonly="${mode != 'customerId'}"/>
+    </div>
+    <div th:class="${mode == 'staffId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Staff ID</label>
+      <input name="staffId" type="number" th:value="${searchStaffId}" placeholder="1" th:readonly="${mode != 'staffId'}"/>
+    </div>
+    <div th:class="${mode == 'inventoryId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Inventory ID</label>
+      <input name="inventoryId" type="number" th:value="${searchInventoryId}" placeholder="1" th:readonly="${mode != 'inventoryId'}"/>
+    </div>
+    <div th:class="${mode == 'dateRange' or mode == 'lastUpdateRange'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Start Date</label>
+      <input name="startDate" type="text" th:value="${startDate}" placeholder="2005-05-24"
+             th:readonly="${mode != 'dateRange' and mode != 'lastUpdateRange'}"/>
+    </div>
+    <div th:class="${mode == 'dateRange' or mode == 'lastUpdateRange'} ? 'filter-field active' : 'filter-field locked'">
+      <label>End Date</label>
+      <input name="endDate" type="text" th:value="${endDate}" placeholder="2005-08-23"
+             th:readonly="${mode != 'dateRange' and mode != 'lastUpdateRange'}"/>
+    </div>
+    <div th:class="${mode == 'returnDateRange'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Return Start Date</label>
+      <input name="returnStartDate" type="text" th:value="${returnStartDate}" placeholder="2005-05-25"
+             th:readonly="${mode != 'returnDateRange'}"/>
+    </div>
+    <div th:class="${mode == 'returnDateRange'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Return End Date</label>
+      <input name="returnEndDate" type="text" th:value="${returnEndDate}" placeholder="2005-08-30"
+             th:readonly="${mode != 'returnDateRange'}"/>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/rentals" class="btn btn-ghost">← Rentals</a>
+    </div>
+  </form>
+  <div class="card" th:if="${rentals != null}">
+    <div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>Rental Date</th><th>Customer ID</th><th>Staff ID</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(rentals)}"><td colspan="5"><div class="empty-state"><p>No results found.</p></div></td></tr>
+        <tr th:each="r : ${rentals}">
+          <td th:text="${r.rentalId}"></td><td th:text="${r.rentalDate}"></td><td th:text="${r.customerId}"></td><td th:text="${r.staffId}"></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/rentals/{id}(id=${r.rentalId})}">View</a>
+            <a class="action-btn edit" th:href="@{/rentals/{id}/edit(id=${r.rentalId})}">Edit</a>
+          </div></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div th:replace="~{fragments/pagination :: pagination('/rentals/search', ${currentPage}, ${totalPages})}"></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

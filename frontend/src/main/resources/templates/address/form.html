@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${address != null} ? 'Edit Address — Film Rental Store' : 'Add Address — Film Rental Store'">Address Form</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <link rel="icon" type="image/svg+xml" th:href="@{/img/logo.svg}"/>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt="Logo"/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <h1 th:if="${address == null}">Add <span>Address</span></h1>
+      <h1 th:if="${address != null}">Edit <span>Address</span></h1>
+      <p th:if="${address == null}">Register a new address in the system</p>
+      <p th:if="${address != null}" th:text="'Editing Address #' + ${addressId}"></p>
+    </div>
+    <a href="/addresses" class="btn btn-ghost"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back to List</a>
+  </div>
+  <div class="card form-card">
+    <div class="card-body">
+      <!-- CREATE -->
+      <form th:if="${address == null}" action="/addresses/save" method="post">
+        <div class="form-group">
+          <label for="address">Address <span style="color:var(--red)">*</span></label>
+          <input id="address" name="address" type="text" placeholder="e.g. 12 Park Street" maxlength="50" required/>
+        </div>
+        <div class="form-group">
+          <label for="address2">Address Line 2 <span style="color:var(--text-muted);font-weight:300;text-transform:none">(optional)</span></label>
+          <input id="address2" name="address2" type="text" placeholder="e.g. Flat 3B" maxlength="50"/>
+        </div>
+        <div class="form-group">
+          <label for="district">District <span style="color:var(--red)">*</span></label>
+          <input id="district" name="district" type="text" placeholder="e.g. West Bengal" maxlength="20" required/>
+        </div>
+        <div class="form-group">
+          <label for="cityId">City ID <span style="color:var(--red)">*</span></label>
+          <input id="cityId" name="cityId" type="number" placeholder="e.g. 300" required/>
+          <p class="hint">Enter the numeric ID of the city. <a href="/cities" style="color:var(--gold)">Browse cities →</a></p>
+        </div>
+        <div class="form-group">
+          <label for="postalCode">Postal Code <span style="color:var(--text-muted);font-weight:300;text-transform:none">(optional)</span></label>
+          <input id="postalCode" name="postalCode" type="text" placeholder="e.g. 700016" maxlength="10"/>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone <span style="color:var(--red)">*</span></label>
+          <input id="phone" name="phone" type="text" placeholder="e.g. 033-12345678" maxlength="20" required/>
+        </div>
+        <div class="form-group">
+          <label for="location">Location <span style="color:var(--text-muted);font-weight:300;text-transform:none">(optional)</span></label>
+          <input id="location" name="location" type="text" placeholder="e.g. POINT(88.3639 22.5726)"/>
+          <p class="hint">WKT format: POINT(longitude latitude)</p>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save Address</button>
+          <a href="/addresses" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+
+      <!-- EDIT -->
+      <form th:if="${address != null}" th:action="@{/addresses/{id}/update(id=${addressId})}" method="post">
+        <div class="form-group">
+          <label for="address">Address <span style="color:var(--red)">*</span></label>
+          <input id="address" name="address" type="text" th:value="${address.address}" maxlength="50" required/>
+        </div>
+        <div class="form-group">
+          <label for="address2">Address Line 2 <span style="color:var(--text-muted);font-weight:300;text-transform:none">(optional)</span></label>
+          <input id="address2" name="address2" type="text" th:value="${address.address2}" maxlength="50"/>
+        </div>
+        <div class="form-group">
+          <label for="district">District <span style="color:var(--red)">*</span></label>
+          <input id="district" name="district" type="text" th:value="${address.district}" maxlength="20" required/>
+        </div>
+        <div class="form-group">
+          <label for="cityId">City ID <span style="color:var(--red)">*</span></label>
+          <input id="cityId" name="cityId" type="number" th:value="${address.cityId}" required/>
+          <p class="hint"><a href="/cities" style="color:var(--gold)">Browse cities →</a></p>
+        </div>
+        <div class="form-group">
+          <label for="postalCode">Postal Code <span style="color:var(--text-muted);font-weight:300;text-transform:none">(optional)</span></label>
+          <input id="postalCode" name="postalCode" type="text" th:value="${address.postalCode}" maxlength="10"/>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone <span style="color:var(--red)">*</span></label>
+          <input id="phone" name="phone" type="text" th:value="${address.phone}" maxlength="20" required/>
+        </div>
+        <div class="form-group">
+          <label for="location">Location <span style="color:var(--text-muted);font-weight:300;text-transform:none">(optional)</span></label>
+          <input id="location" name="location" type="text" th:value="${address.location}" placeholder="e.g. POINT(88.3639 22.5726)"/>
+          <p class="hint">WKT format: POINT(longitude latitude)</p>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Update Address</button>
+          <a href="/addresses" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span><span>Running on <a href="#">localhost:8082</a></span></footer>
+</body>
+</html>

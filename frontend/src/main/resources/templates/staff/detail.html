@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Staff Detail — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div class="page-header">
+    <div><h1>Staff <span th:text="'#'+${staff.staffId}"></span></h1><p th:text="${staff.firstName}+' '+${staff.lastName}"></p></div>
+    <div style="display:flex;gap:.5rem"><a th:href="@{/staff/{id}/edit(id=${staff.staffId})}" class="btn btn-primary">Edit</a><a href="/staff" class="btn btn-ghost">← Back</a></div>
+  </div>
+  <div class="card"><div class="card-body"><dl class="detail-grid">
+    <dt>Staff ID</dt><dd th:text="${staff.staffId}"></dd>
+    <dt>First Name</dt><dd th:text="${staff.firstName}"></dd>
+    <dt>Last Name</dt><dd th:text="${staff.lastName}"></dd>
+    <dt>Username</dt><dd th:text="${staff.username}"></dd>
+    <dt>Email</dt><dd th:text="${staff.email}"></dd>
+    <dt>Store ID</dt><dd th:text="${staff.storeId}"></dd>
+    <dt>Address ID</dt><dd th:text="${staff.addressId}"></dd>
+    <dt>Active</dt><dd th:text="${staff.active ? 'Yes' : 'No'}"></dd>
+    <dt>Last Update</dt><dd th:text="${staff.lastUpdate}"></dd>
+  </dl></div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

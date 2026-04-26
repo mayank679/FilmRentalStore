@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Actors — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    .filter-field.locked input { opacity:.35; pointer-events:none; background:var(--surface); cursor:not-allowed; }
+    .filter-field.locked label { opacity:.4; }
+    .filter-field.active label { color:var(--gold); font-weight:500; }
+    .mode-title { font-size:.82rem; color:var(--gold-dim); margin-bottom:1rem; padding:.4rem .8rem;
+      background:var(--surface2); border-left:3px solid var(--gold-dim); border-radius:0 4px 4px 0; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Actors</span></h1>
+      <p th:if="${mode == null}">Select a search mode from the Actors list</p>
+      <p th:if="${mode == 'id'}">GET /api/actors/{id} — Find actor by ID</p>
+      <p th:if="${mode == 'firstName'}">GET /api/actors/search/first-name — Search by first name</p>
+      <p th:if="${mode == 'lastName'}">GET /api/actors/search/last-name — Search by last name</p>
+      <p th:if="${mode == 'fullName'}">GET /api/actors/search/full-name — Search by full name</p>
+      <p th:if="${mode == 'updateRange'}">GET /api/actors/search/last-update/range — Updated within date range</p>
+      <p th:if="${mode == 'updateAfter'}">GET /api/actors/search/last-update/after — Updated after a date</p>
+      <p th:if="${mode == 'updateBefore'}">GET /api/actors/search/last-update/before — Updated before a date</p>
+    </div>
+    <a href="/actors" class="btn btn-ghost">← Back</a>
+  </div>
+
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+  <form class="filter-panel" method="get" th:action="@{/actors/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+
+    <div th:class="${mode == 'id'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Actor ID</label>
+      <input name="id" type="number" th:value="${searchId}" placeholder="1" th:readonly="${mode != 'id'}"/>
+    </div>
+
+    <div th:class="${mode == 'firstName' or mode == 'fullName'} ? 'filter-field active' : 'filter-field locked'">
+      <label>First Name</label>
+      <input name="firstName" type="text" th:value="${searchFirstName}" placeholder="PENELOPE"
+             th:readonly="${mode != 'firstName' and mode != 'fullName'}"/>
+    </div>
+
+    <div th:class="${mode == 'lastName' or mode == 'fullName'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Last Name</label>
+      <input name="lastName" type="text" th:value="${searchLastName}" placeholder="GUINESS"
+             th:readonly="${mode != 'lastName' and mode != 'fullName'}"/>
+    </div>
+
+    <div th:class="${mode == 'updateRange' or mode == 'updateAfter'} ? 'filter-field active' : 'filter-field locked'">
+      <label>From Date</label>
+      <input name="from" type="text" th:value="${searchFrom}" placeholder="2006-02-15T04:34:33"
+             th:readonly="${mode != 'updateRange' and mode != 'updateAfter'}"/>
+    </div>
+
+    <div th:class="${mode == 'updateRange' or mode == 'updateBefore'} ? 'filter-field active' : 'filter-field locked'">
+      <label>To Date</label>
+      <input name="to" type="text" th:value="${searchTo}" placeholder="2006-02-15T04:34:33"
+             th:readonly="${mode != 'updateRange' and mode != 'updateBefore'}"/>
+    </div>
+
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/actors" class="btn btn-ghost">← Actors</a>
+    </div>
+  </form>
+
+  <div class="card" th:if="${actors != null}">
+    <div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(actors)}"><td colspan="4"><div class="empty-state"><p>No results found.</p></div></td></tr>
+        <tr th:each="a : ${actors}">
+          <td th:text="${a.actorId}"></td><td th:text="${a.firstName}"></td><td th:text="${a.lastName}"></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/actors/{id}(id=${a.actorId})}">View</a>
+            <a class="action-btn edit" th:href="@{/actors/{id}/edit(id=${a.actorId})}">Edit</a>
+          </div></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div th:replace="~{fragments/pagination :: pagination('/actors/search', ${currentPage}, ${totalPages})}"></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

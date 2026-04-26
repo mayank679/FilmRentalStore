@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Film Texts — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    .filter-field.locked input,.filter-field.locked textarea { opacity:.35; pointer-events:none; background:var(--surface); cursor:not-allowed; }
+    .filter-field.locked label { opacity:.4; }
+    .filter-field.active label { color:var(--gold); font-weight:500; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Film Texts</span></h1>
+      <p th:if="${mode == null}">Select a search mode</p>
+      <p th:if="${mode == 'id'}">GET /api/filmtexts/{filmId} — Find film text by film ID</p>
+      <p th:if="${mode == 'title'}">GET /api/filmtexts/search/title — Search by title</p>
+      <p th:if="${mode == 'description'}">GET /api/filmtexts/search/description — Search by description</p>
+      <p th:if="${mode == 'keyword'}">GET /api/filmtexts/search/keyword — Search by keyword</p>
+    </div>
+    <a href="/filmtexts" class="btn btn-ghost">← Back</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/filmtexts/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+    <div th:class="${mode == 'id'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Film ID</label>
+      <input name="id" type="number" th:value="${searchId}" placeholder="1" th:readonly="${mode != 'id'}"/>
+    </div>
+    <div th:class="${mode == 'title'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Title</label>
+      <input name="title" type="text" th:value="${searchTitle}" placeholder="ACADEMY" th:readonly="${mode != 'title'}"/>
+    </div>
+    <div th:class="${mode == 'description'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Description</label>
+      <input name="description" type="text" th:value="${searchDescription}" placeholder="A description" th:readonly="${mode != 'description'}"/>
+    </div>
+    <div th:class="${mode == 'keyword'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Keyword</label>
+      <input name="keyword" type="text" th:value="${searchKeyword}" placeholder="epic" th:readonly="${mode != 'keyword'}"/>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/filmtexts" class="btn btn-ghost">← Film Texts</a>
+    </div>
+  </form>
+  <div class="card" th:if="${filmtexts != null}">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Film ID</th><th>Title</th><th>Description</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(filmtexts)}"><td colspan="4"><div class="empty-state"><p>No results found.</p></div></td></tr>
+        <tr th:each="ft : ${filmtexts}">
+          <td th:text="${ft.filmId}"></td><td th:text="${ft.title}"></td>
+          <td><span th:text="${ft.description != null ? #strings.abbreviate(ft.description,80) : '—'}"></span></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/filmtexts/{id}(id=${ft.filmId})}">View</a>
+            <a class="action-btn edit" th:href="@{/filmtexts/{id}/edit(id=${ft.filmId})}">Edit</a>
+          </div></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div th:replace="~{fragments/pagination :: pagination('/filmtexts/search', ${currentPage}, ${totalPages})}"></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

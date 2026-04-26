@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Addresses — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    .filter-field.locked input { opacity:.35; pointer-events:none; background:var(--surface); cursor:not-allowed; }
+    .filter-field.locked label { opacity:.4; }
+    .filter-field.active label { color:var(--gold); font-weight:500; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Addresses</span></h1>
+      <p th:if="${mode == null}">Select a search mode</p>
+      <p th:if="${mode == 'id'}">GET /api/addresses/{id} — Find address by ID</p>
+      <p th:if="${mode == 'cityId'}">GET /api/addresses/city/{cityId} — Filter by city</p>
+      <p th:if="${mode == 'district'}">GET /api/addresses/district/{district} — Filter by district</p>
+      <p th:if="${mode == 'postalCode'}">GET /api/addresses/postal/{postalCode} — Filter by postal code</p>
+      <p th:if="${mode == 'phone'}">GET /api/addresses/phone/{phone} — Filter by phone</p>
+    </div>
+    <a href="/addresses" class="btn btn-ghost">← All Addresses</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/addresses/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+    <div th:class="${mode == 'id'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Address ID</label>
+      <input name="id" type="number" th:value="${searchId}" placeholder="1" th:readonly="${mode != 'id'}"/>
+    </div>
+    <div th:class="${mode == 'cityId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>City ID</label>
+      <input name="cityId" type="number" th:value="${searchCityId}" placeholder="300" th:readonly="${mode != 'cityId'}"/>
+    </div>
+    <div th:class="${mode == 'district'} ? 'filter-field active' : 'filter-field locked'">
+      <label>District</label>
+      <input name="district" type="text" th:value="${searchDistrict}" placeholder="California" th:readonly="${mode != 'district'}"/>
+    </div>
+    <div th:class="${mode == 'postalCode'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Postal Code</label>
+      <input name="postalCode" type="text" th:value="${searchPostalCode}" placeholder="35200" th:readonly="${mode != 'postalCode'}"/>
+    </div>
+    <div th:class="${mode == 'phone'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Phone</label>
+      <input name="phone" type="text" th:value="${searchPhone}" placeholder="14033335568" th:readonly="${mode != 'phone'}"/>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/addresses" class="btn btn-ghost">← Addresses</a>
+    </div>
+  </form>
+  <div class="card" th:if="${addresses != null}">
+    <div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>Address</th><th>District</th><th>Phone</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(addresses)}"><td colspan="5"><div class="empty-state"><p>No results found.</p></div></td></tr>
+        <tr th:each="a : ${addresses}">
+          <td th:text="${a.addressId}"></td><td th:text="${a.address}"></td><td th:text="${a.district}"></td><td th:text="${a.phone}"></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/addresses/{id}(id=${a.addressId})}">View</a>
+            <a class="action-btn edit" th:href="@{/addresses/{id}/edit(id=${a.addressId})}">Edit</a>
+          </div></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div th:replace="~{fragments/pagination :: pagination('/addresses/search', ${currentPage}, ${totalPages})}"></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Films — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    /* locked fields look visually muted */
+    .filter-field.locked input,
+    .filter-field.locked select {
+      opacity: .35;
+      pointer-events: none;
+      background: var(--surface);
+      cursor: not-allowed;
+    }
+    .filter-field.locked label {
+      opacity: .4;
+    }
+    .filter-field.active label {
+      color: var(--gold);
+      font-weight: 500;
+    }
+    .mode-title {
+      font-size: .82rem;
+      color: var(--gold-dim);
+      margin-bottom: 1rem;
+      padding: .4rem .8rem;
+      background: var(--surface2);
+      border-left: 3px solid var(--gold-dim);
+      border-radius: 0 4px 4px 0;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand">
+    <img th:src="@{/img/logo.svg}" alt=""/>
+    <span>Film<em>Rental</em></span>
+  </a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Films</span></h1>
+      <!-- Dynamic subtitle showing which API is active -->
+      <p th:if="${mode == null}">Select a search mode from the Films list</p>
+      <p th:if="${mode == 'id'}">GET /films/{id} — Find film by ID</p>
+      <p th:if="${mode == 'title'}">GET /films/by-title — Search by title</p>
+      <p th:if="${mode == 'rating'}">GET /films/by-rating — Filter by rating</p>
+      <p th:if="${mode == 'releaseYear'}">GET /films/by-release-year — Filter by release year</p>
+      <p th:if="${mode == 'languageId'}">GET /films/by-language-id — Filter by language ID</p>
+      <p th:if="${mode == 'languageName'}">GET /films/by-language-name — Filter by language name</p>
+      <p th:if="${mode == 'rentalDuration'}">GET /films/by-rental-duration — Filter by rental duration</p>
+      <p th:if="${mode == 'rentalRate'}">GET /films/by-rental-rate — Filter by rental rate</p>
+      <p th:if="${mode == 'idRating'}">GET /films/by-id-and-rating — Filter by Film ID + Rating</p>
+      <p th:if="${mode == 'ratingRate'}">GET /films/by-rating-and-rate — Filter by Rating + Rental Rate</p>
+      <p th:if="${mode == 'lengthYear'}">GET /films/by-length-and-year — Filter by Length + Release Year</p>
+      <p th:if="${mode == 'rentalRange'}">GET /films/rental-rate-range — Filter by rental rate range</p>
+      <p th:if="${mode == 'replaceRange'}">GET /films/replacement-cost-range — Filter by replacement cost range</p>
+    </div>
+    <div style="display:flex;gap:.5rem">
+      <a href="/films/stats" class="btn btn-outline">📊 Stats</a>
+      <a href="/films" class="btn btn-ghost">← Back</a>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+  <!-- Hidden mode field carried through every submission -->
+  <form class="filter-panel" method="get" th:action="@{/films/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+
+    <!-- ── mode: id ────────────────────────────────────────────────── -->
+    <div th:class="${mode == 'id'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Film ID</label>
+      <input name="id" type="number" th:value="${searchId}" placeholder="1"
+             th:readonly="${mode != 'id'}"/>
+    </div>
+
+    <!-- ── mode: title ─────────────────────────────────────────────── -->
+    <div th:class="${mode == 'title'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Title</label>
+      <input name="title" type="text" th:value="${searchTitle}" placeholder="ACADEMY"
+             th:readonly="${mode != 'title'}"/>
+    </div>
+
+    <!-- ── mode: rating  /  ratingRate  /  idRating ────────────────── -->
+    <div th:class="${mode == 'rating' or mode == 'ratingRate' or mode == 'idRating'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Rating</label>
+      <select name="rating"
+              th:disabled="${mode != 'rating' and mode != 'ratingRate' and mode != 'idRating'}">
+        <option value="">Any</option>
+        <option th:selected="${searchRating == 'G'}">G</option>
+        <option th:selected="${searchRating == 'PG'}">PG</option>
+        <option th:selected="${searchRating == 'PG-13'}">PG-13</option>
+        <option th:selected="${searchRating == 'R'}">R</option>
+        <option th:selected="${searchRating == 'NC-17'}">NC-17</option>
+      </select>
+    </div>
+
+    <!-- ── mode: releaseYear  /  lengthYear ────────────────────────── -->
+    <div th:class="${mode == 'releaseYear' or mode == 'lengthYear'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Release Year</label>
+      <input name="releaseYear" type="number" th:value="${searchReleaseYear}" placeholder="2006"
+             th:readonly="${mode != 'releaseYear' and mode != 'lengthYear'}"/>
+    </div>
+
+    <!-- ── mode: languageId ────────────────────────────────────────── -->
+    <div th:class="${mode == 'languageId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Language ID</label>
+      <input name="languageId" type="number" th:value="${searchLanguageId}" placeholder="1"
+             th:readonly="${mode != 'languageId'}"/>
+    </div>
+
+    <!-- ── mode: languageName ──────────────────────────────────────── -->
+    <div th:class="${mode == 'languageName'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Language Name</label>
+      <input name="languageName" type="text" th:value="${searchLanguageName}" placeholder="English"
+             th:readonly="${mode != 'languageName'}"/>
+    </div>
+
+    <!-- ── mode: rentalDuration ────────────────────────────────────── -->
+    <div th:class="${mode == 'rentalDuration'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Rental Duration (days)</label>
+      <input name="rentalDuration" type="number" th:value="${searchRentalDuration}" placeholder="5"
+             th:readonly="${mode != 'rentalDuration'}"/>
+    </div>
+
+    <!-- ── mode: rentalRate  /  ratingRate ─────────────────────────── -->
+    <div th:class="${mode == 'rentalRate' or mode == 'ratingRate'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Rental Rate</label>
+      <input name="rentalRate" type="text" th:value="${searchRentalRate}" placeholder="2.99"
+             th:readonly="${mode != 'rentalRate' and mode != 'ratingRate'}"/>
+    </div>
+
+    <!-- ── mode: idRating — filmId ─────────────────────────────────── -->
+    <div th:class="${mode == 'idRating'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Film ID (for ID+Rating search)</label>
+      <input name="filmId" type="number" th:value="${searchFilmId}" placeholder="1"
+             th:readonly="${mode != 'idRating'}"/>
+    </div>
+
+    <!-- ── mode: lengthYear — length ───────────────────────────────── -->
+    <div th:class="${mode == 'lengthYear'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Length (minutes)</label>
+      <input name="length" type="number" th:value="${searchLength}" placeholder="120"
+             th:readonly="${mode != 'lengthYear'}"/>
+    </div>
+
+    <!-- ── mode: rentalRange ───────────────────────────────────────── -->
+    <div th:class="${mode == 'rentalRange'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Min Rental Rate</label>
+      <input name="minRate" type="text" th:value="${searchMinRate}" placeholder="1.99"
+             th:readonly="${mode != 'rentalRange'}"/>
+    </div>
+    <div th:class="${mode == 'rentalRange'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Max Rental Rate</label>
+      <input name="maxRate" type="text" th:value="${searchMaxRate}" placeholder="4.99"
+             th:readonly="${mode != 'rentalRange'}"/>
+    </div>
+
+    <!-- ── mode: replaceRange ──────────────────────────────────────── -->
+    <div th:class="${mode == 'replaceRange'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Min Replacement Cost</label>
+      <input name="minCost" type="text" th:value="${searchMinCost}" placeholder="9.99"
+             th:readonly="${mode != 'replaceRange'}"/>
+    </div>
+    <div th:class="${mode == 'replaceRange'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Max Replacement Cost</label>
+      <input name="maxCost" type="text" th:value="${searchMaxCost}" placeholder="29.99"
+             th:readonly="${mode != 'replaceRange'}"/>
+    </div>
+
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/films" class="btn btn-ghost">← Films</a>
+    </div>
+  </form>
+
+  <!-- Results table -->
+  <div class="card" th:if="${films != null}">
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr><th>ID</th><th>Title</th><th>Year</th><th>Rating</th><th>Rental Rate</th><th>Length</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(films)}">
+          <td colspan="7"><div class="empty-state"><p>No results found.</p></div></td>
+        </tr>
+        <tr th:each="f : ${films}">
+          <td th:text="${f.filmId}"></td>
+          <td th:text="${f.title}"></td>
+          <td th:text="${f.releaseYear}"></td>
+          <td><span class="badge" th:text="${f.rating}"></span></td>
+          <td th:text="${f.rentalRate}"></td>
+          <td th:text="${f.length}"></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/films/{id}(id=${f.filmId})}">View</a>
+            <a class="action-btn edit" th:href="@{/films/{id}/edit(id=${f.filmId})}">Edit</a>
+          </div></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Pagination -->
+  <div th:replace="~{fragments/pagination :: pagination('/films/search', ${currentPage}, ${totalPages})}"></div>
+
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body>
+</html>

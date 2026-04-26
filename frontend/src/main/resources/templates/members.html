@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Film Rental Store — Team</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0d0d0f;--surface:#141418;--surface2:#1c1c22;--border:#2a2a35;--gold:#c9a84c;--gold-light:#e2c97e;--gold-dim:#7a6230;--text:#e8e6e0;--text-muted:#7a7870;--font-display:'Playfair Display',Georgia,serif;--font-body:'DM Sans',sans-serif;--radius:6px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-weight:300;font-size:15px;line-height:1.7;min-height:100vh;background-image:radial-gradient(ellipse at 20% 0%,rgba(201,168,76,.05) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(201,168,76,.04) 0%,transparent 60%);}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px}
+    .navbar{display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:64px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.4);}
+    .navbar-brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;}
+    .navbar-brand svg{width:32px;height:32px;}
+    .navbar-brand span{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--gold);letter-spacing:.04em;}
+    .navbar-brand span em{font-style:normal;color:var(--text);font-weight:400;}
+    .navbar-badge{font-size:.7rem;background:rgba(201,168,76,.12);border:1px solid var(--gold-dim);color:var(--gold);padding:2px 10px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase;}
+    .nav-links{display:flex;align-items:center;gap:1rem;}
+    .nav-link{font-size:.78rem;color:var(--text-muted);text-decoration:none;padding:.35rem .9rem;border:1px solid var(--border);border-radius:6px;transition:color .2s,border-color .2s;letter-spacing:.04em;}
+    .nav-link:hover{color:var(--gold);border-color:var(--gold-dim);}
+    .nav-link.active{color:var(--gold);border-color:var(--gold-dim);background:rgba(201,168,76,.06);}
+
+    .hero{text-align:center;padding:4rem 2rem 2.5rem;position:relative;}
+    .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:60px;background:linear-gradient(to bottom,transparent,var(--gold-dim));}
+    .hero-eyebrow{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;display:flex;align-items:center;justify-content:center;gap:1rem;}
+    .hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:40px;height:1px;background:var(--gold-dim);}
+    .hero h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,3rem);font-weight:700;line-height:1.15;color:var(--text);margin-bottom:.8rem;}
+    .hero h1 em{font-style:italic;color:var(--gold);}
+    .hero p{color:var(--text-muted);font-size:.95rem;max-width:500px;margin:0 auto;}
+
+    .members-section{max-width:1000px;margin:0 auto;padding:2rem 2rem 5rem;}
+    .section-label{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;color:var(--text-muted);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;}
+    .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+    .members-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1.2rem;}
+
+    .member-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.75rem 1.25rem;text-decoration:none;color:inherit;display:flex;flex-direction:column;align-items:center;gap:.8rem;transition:border-color .25s,transform .25s,box-shadow .25s;animation:cardIn .5s both;position:relative;overflow:hidden;}
+    .member-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--card-accent,var(--gold-dim));opacity:0;transition:opacity .3s;}
+    .member-card:hover{border-color:var(--gold-dim);transform:translateY(-5px);box-shadow:0 18px 45px rgba(0,0,0,.55);}
+    .member-card:hover::before{opacity:1;}
+
+    .member-avatar{width:66px;height:66px;border-radius:50%;background:var(--card-gradient,linear-gradient(135deg,var(--gold-dim),var(--gold)));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:#0d0d0f;letter-spacing:.04em;box-shadow:0 0 18px var(--card-glow,rgba(201,168,76,.3));transition:box-shadow .3s;}
+    .member-card:hover .member-avatar{box-shadow:0 0 32px var(--card-glow,rgba(201,168,76,.5));}
+
+    .member-name{font-family:var(--font-display);font-size:1.05rem;font-weight:600;color:var(--text);text-align:center;line-height:1.3;}
+    .member-role{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);text-align:center;}
+    .member-tags{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center;margin-top:.2rem;}
+    .entity-tag{font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.15);color:var(--gold-dim);padding:.18rem .55rem;border-radius:4px;}
+    .member-arrow{font-size:.72rem;color:var(--gold-dim);margin-top:.3rem;opacity:.7;transition:opacity .2s,transform .2s;}
+    .member-card:hover .member-arrow{opacity:1;color:var(--gold-light);transform:translateX(4px);}
+
+    .card-blue{--card-gradient:linear-gradient(135deg,#5b6ef5,#3b4fd4);--card-glow:rgba(91,110,245,.35);--card-accent:#5b6ef5;}
+    .card-purple{--card-gradient:linear-gradient(135deg,#8b5cf6,#6d3fd4);--card-glow:rgba(139,92,246,.35);--card-accent:#8b5cf6;}
+    .card-teal{--card-gradient:linear-gradient(135deg,#14b8a6,#0d8a7d);--card-glow:rgba(20,184,166,.35);--card-accent:#14b8a6;}
+    .card-rose{--card-gradient:linear-gradient(135deg,#f43f5e,#c22042);--card-glow:rgba(244,63,94,.35);--card-accent:#f43f5e;}
+    .card-amber{--card-gradient:linear-gradient(135deg,#f59e0b,#c47d08);--card-glow:rgba(245,158,11,.35);--card-accent:#f59e0b;}
+
+    @keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .member-card:nth-child(1){animation-delay:.05s}.member-card:nth-child(2){animation-delay:.1s}.member-card:nth-child(3){animation-delay:.15s}.member-card:nth-child(4){animation-delay:.2s}.member-card:nth-child(5){animation-delay:.25s}
+
+    .footer{border-top:1px solid var(--border);padding:1.5rem 2.5rem;display:flex;align-items:center;justify-content:space-between;color:var(--text-muted);font-size:.8rem;}
+    .footer a{color:var(--gold-dim);text-decoration:none;}.footer a:hover{color:var(--gold);}
+    @media(max-width:640px){.navbar{padding:0 1rem}.members-section{padding:1.5rem 1rem 4rem}.members-grid{grid-template-columns:repeat(2,1fr)}.footer{flex-direction:column;gap:.5rem;text-align:center}}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/members" class="navbar-brand">
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="16" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="20" cy="20" r="5" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="20" cy="9"  r="2.5" fill="#c9a84c" opacity=".6"/>
+      <circle cx="20" cy="31" r="2.5" fill="#c9a84c" opacity=".6"/>
+      <circle cx="9"  cy="20" r="2.5" fill="#c9a84c" opacity=".6"/>
+      <circle cx="31" cy="20" r="2.5" fill="#c9a84c" opacity=".6"/>
+      <circle cx="13" cy="13" r="2.5" fill="#c9a84c" opacity=".35"/>
+      <circle cx="27" cy="27" r="2.5" fill="#c9a84c" opacity=".35"/>
+      <circle cx="27" cy="13" r="2.5" fill="#c9a84c" opacity=".35"/>
+      <circle cx="13" cy="27" r="2.5" fill="#c9a84c" opacity=".35"/>
+    </svg>
+    <span>Film<em>Rental</em></span>
+  </a>
+  <div class="nav-links">
+    <a href="/members" class="nav-link active">👥 Team</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-eyebrow">Film Rental Store</div>
+  <h1>Meet the <em>Team</em></h1>
+  <p>Click a member to explore their endpoints and API documentation.</p>
+</header>
+
+<section class="members-section">
+  <div class="section-label">Team Members</div>
+  <div class="members-grid">
+
+      <a href="/members/adrija" class="member-card card-amber">
+		<img src="/img/Adrija.jpg" alt="Adrija Ghosh" 
+	     style="width:90px;height:90px;object-fit:cover;object-position:center 10%;border-radius:50%;display:block;box-shadow:0 0 18px rgba(91,110,245,.4);"/>	    
+        <div class="member-name">Adrija Ghosh</div>
+        <div class="member-role">Film Catalogue</div>
+        <div class="member-tags"> 
+          <span class="entity-tag">Film</span>
+          <span class="entity-tag">Language</span>
+          <span class="entity-tag">Category</span>
+        </div>
+        <div class="member-arrow">Explore APIs →</div>
+      </a>
+
+      <a href="/members/ananya" class="member-card card-amber">
+		<img src="/img/Ananya.jpg" alt="Akshay Raj" 
+			style="width:90px;height:90px;object-fit:cover;object-position:center 10%;border-radius:50%;display:block;box-shadow:0 0 18px rgba(91,110,245,.4);"/>
+        <div class="member-name">Ananya Shree</div>
+        <div class="member-role">Store Module</div>
+        <div class="member-tags">
+          <span class="entity-tag">Customer</span>
+          <span class="entity-tag">Store</span>
+          <span class="entity-tag">Staff</span>
+        </div>
+        <div class="member-arrow">Explore APIs →</div>
+      </a>
+
+      <a href="/members/akshay" class="member-card card-amber">
+		<img src="/img/Akshay.jpg" alt="Akshay Raj" 
+			 style="width:90px;height:90px;object-fit:cover;object-position:center 10%;border-radius:50%;display:block;box-shadow:0 0 18px rgba(91,110,245,.4);"/>
+        <div class="member-name">Akshay Raj Saxena</div>
+        <div class="member-role">Transactions</div>
+        <div class="member-tags">
+          <span class="entity-tag">Inventory</span>
+          <span class="entity-tag">Rental</span>
+          <span class="entity-tag">Payment</span>
+        </div>
+        <div class="member-arrow">Explore APIs →</div>
+      </a>
+
+	  <a href="/members/mayank" class="member-card card-amber">
+	    <img src="/img/Mayank.jpg" alt="Mayank Raj" 
+	         style="width:90px;height:90px;object-fit:cover;object-position:center 10%;border-radius:50%;display:block;box-shadow:0 0 18px rgba(91,110,245,.4);"/>
+	    <div class="member-name">Mayank Raj</div>
+	    <div class="member-role">Location Module</div>
+	    <div class="member-tags">
+	      <span class="entity-tag">Country</span>
+	      <span class="entity-tag">City</span>
+	      <span class="entity-tag">Address</span>
+	    </div>
+	    <div class="member-arrow">Explore APIs →</div>
+	  </a>
+ 
+      <a href="/members/sneha" class="member-card card-amber">
+		<img src="/img/Sneha.jpg" alt="Sneha Singh"  
+			  style="width:90px;height:90px;object-fit:cover;object-position:center 10%;border-radius:50%;display:block;box-shadow:0 0 18px rgba(91,110,245,.4);"/>
+        <div class="member-name">Sneha Singh</div>
+        <div class="member-role">Content &amp; Linking</div>
+        <div class="member-tags">
+          <span class="entity-tag">Actor</span>
+          <span class="entity-tag">Film-Actor</span>
+          <span class="entity-tag">Film-Category</span>
+          <span class="entity-tag">Film-Text</span>
+        </div>
+        <div class="member-arrow">Explore APIs →</div>
+      </a>
+
+    </div>
+</section>
+
+<footer class="footer">
+  <span>Film Rental Store &copy; 2026</span>
+  <span>UI <code style="color:var(--gold);font-size:.75rem">:8081</code> &rarr; API <code style="color:var(--gold);font-size:.75rem">:8082</code></span>
+</footer>
+
+</body>
+</html>

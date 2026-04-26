@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- ═══════════════════════════════════════════════════════════
+     Reusable Pagination Fragment
+     Usage:  th:replace="~{fragments/pagination :: pagination('/actors', ${currentPage}, ${totalPages})}"
+     ═══════════════════════════════════════════════════════════ -->
+<div th:fragment="pagination(baseUrl, currentPage, totalPages)"
+     class="pagination-container" th:if="${totalPages != null and totalPages > 1}">
+  <div class="pagination">
+    <!-- Prev -->
+    <a th:if="${currentPage > 0}"
+       th:href="@{${baseUrl}(page=${currentPage - 1}, name=${param.name}, countryId=${param.countryId}, cityId=${param.cityId}, district=${param.district}, postalCode=${param.postalCode}, phone=${param.phone}, firstName=${param.firstName}, lastName=${param.lastName}, title=${param.title}, keyword=${param.keyword}, description=${param.description}, actorId=${param.actorId}, categoryId=${param.categoryId}, email=${param.email}, storeId=${param.storeId}, filmId=${param.filmId}, inventoryId=${param.inventoryId}, customerId=${param.customerId}, staffId=${param.staffId}, rating=${param.rating}, releaseYear=${param.releaseYear}, languageId=${param.languageId}, rentalDuration=${param.rentalDuration}, length=${param.length}, replacementCost=${param.replacementCost}, active=${param.active})}"
+       class="page-link">&#8592; Prev</a>
+    <span th:if="${currentPage == 0}" class="page-link disabled">&#8592; Prev</span>
+
+    <!-- Page Numbers -->
+    <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:if="${i == 0 or i == totalPages - 1 or (i >= currentPage - 2 and i <= currentPage + 2)}">
+      
+      <!-- Ellipsis before current window -->
+      <span th:if="${i == currentPage - 2 and i > 1}" class="page-link disabled dots">...</span>
+      
+      <!-- Ellipsis before last page -->
+      <span th:if="${i == totalPages - 1 and i > currentPage + 3}" class="page-link disabled dots">...</span>
+      
+      <a th:href="@{${baseUrl}(page=${i}, name=${param.name}, countryId=${param.countryId}, cityId=${param.cityId}, district=${param.district}, postalCode=${param.postalCode}, phone=${param.phone}, firstName=${param.firstName}, lastName=${param.lastName}, title=${param.title}, keyword=${param.keyword}, description=${param.description}, actorId=${param.actorId}, categoryId=${param.categoryId}, email=${param.email}, storeId=${param.storeId}, filmId=${param.filmId}, inventoryId=${param.inventoryId}, customerId=${param.customerId}, staffId=${param.staffId}, rating=${param.rating}, releaseYear=${param.releaseYear}, languageId=${param.languageId}, rentalDuration=${param.rentalDuration}, length=${param.length}, replacementCost=${param.replacementCost}, active=${param.active})}"
+         th:text="${i + 1}"
+         th:classappend="${i == currentPage} ? 'active' : ''"
+         class="page-link"></a>
+    </th:block>
+
+    <!-- Next -->
+    <a th:if="${currentPage < totalPages - 1}"
+       th:href="@{${baseUrl}(page=${currentPage + 1}, name=${param.name}, countryId=${param.countryId}, cityId=${param.cityId}, district=${param.district}, postalCode=${param.postalCode}, phone=${param.phone}, firstName=${param.firstName}, lastName=${param.lastName}, title=${param.title}, keyword=${param.keyword}, description=${param.description}, actorId=${param.actorId}, categoryId=${param.categoryId}, email=${param.email}, storeId=${param.storeId}, filmId=${param.filmId}, inventoryId=${param.inventoryId}, customerId=${param.customerId}, staffId=${param.staffId}, rating=${param.rating}, releaseYear=${param.releaseYear}, languageId=${param.languageId}, rentalDuration=${param.rentalDuration}, length=${param.length}, replacementCost=${param.replacementCost}, active=${param.active})}"
+       class="page-link">Next &#8594;</a>
+    <span th:if="${currentPage >= totalPages - 1}" class="page-link disabled">Next &#8594;</span>
+  </div>
+</div>
+</html>

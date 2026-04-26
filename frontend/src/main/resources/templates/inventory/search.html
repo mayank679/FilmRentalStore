@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Inventory — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    .filter-field.locked input { opacity:.35; pointer-events:none; background:var(--surface); cursor:not-allowed; }
+    .filter-field.locked label { opacity:.4; }
+    .filter-field.active label { color:var(--gold); font-weight:500; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Inventory</span></h1>
+      <p th:if="${mode == null}">Select a search mode</p>
+      <p th:if="${mode == 'id'}">GET /api/inventory/{id} — Find inventory by ID</p>
+      <p th:if="${mode == 'filmId'}">GET /api/inventory/film/{filmId} — Get by film</p>
+      <p th:if="${mode == 'storeId'}">GET /api/inventory/store/{storeId} — Get by store</p>
+    </div>
+    <a href="/inventory" class="btn btn-ghost">← Back</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/inventory/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+    <div th:class="${mode == 'id'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Inventory ID</label>
+      <input name="id" type="number" th:value="${searchId}" placeholder="1" th:readonly="${mode != 'id'}"/>
+    </div>
+    <div th:class="${mode == 'filmId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Film ID</label>
+      <input name="filmId" type="number" th:value="${searchFilmId}" placeholder="1" th:readonly="${mode != 'filmId'}"/>
+    </div>
+    <div th:class="${mode == 'storeId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Store ID</label>
+      <input name="storeId" type="number" th:value="${searchStoreId}" placeholder="1" th:readonly="${mode != 'storeId'}"/>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/inventory" class="btn btn-ghost">← Inventory</a>
+    </div>
+  </form>
+  <div class="card" th:if="${inventory != null}">
+    <div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>Film ID</th><th>Store ID</th><th>Last Update</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(inventory)}"><td colspan="5"><div class="empty-state"><p>No results found.</p></div></td></tr>
+        <tr th:each="i : ${inventory}">
+          <td th:text="${i.inventoryId}"></td><td th:text="${i.filmId}"></td><td th:text="${i.storeId}"></td><td th:text="${i.lastUpdate}"></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/inventory/{id}(id=${i.inventoryId})}">View</a>
+            <a class="action-btn edit" th:href="@{/inventory/{id}/edit(id=${i.inventoryId})}">Edit</a>
+          </div></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div th:replace="~{fragments/pagination :: pagination('/inventory/search', ${currentPage}, ${totalPages})}"></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

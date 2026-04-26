@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Film Categories — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Film-Category</span></h1><p>Category associations per film</p></div>
+    <a href="/filmcategories/create" class="btn btn-primary">+ Add Association</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/filmcategories}">
+    <div class="filter-field"><label>Film ID</label><input name="filmId" type="number" th:value="${filterFilmId}" placeholder="1"/></div>
+    <div class="filter-field"><label>Category ID</label><input name="categoryId" type="number" th:value="${filterCategoryId}" placeholder="1"/></div>
+    <div class="filter-actions"><button type="submit" class="btn btn-primary">Filter</button><a href="/filmcategories" class="btn btn-ghost">Clear</a></div>
+  </form>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Film ID</th><th>Category ID</th><th>Last Update</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${#lists.isEmpty(filmcategories)}"><td colspan="4"><div class="empty-state"><p>No associations found.</p></div></td></tr>
+      <tr th:each="fc : ${filmcategories}">
+        <td th:text="${fc.filmId}"></td>
+        <td th:text="${fc.categoryId}"></td>
+        <td th:text="${fc.lastUpdate}"></td>
+        <td><div class="row-actions">
+          <a class="action-btn view" th:href="@{/filmcategories/{f}/{c}(f=${fc.filmId},c=${fc.categoryId})}">View</a>
+          <a class="action-btn edit" th:href="@{/filmcategories/{f}/{c}/edit(f=${fc.filmId},c=${fc.categoryId})}">Edit</a>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/filmcategories', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

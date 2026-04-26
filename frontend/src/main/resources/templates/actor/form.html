@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Actor Form — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div class="page-header">
+    <div><h1 th:if="${actor == null}">Add <span>Actor</span></h1><h1 th:if="${actor != null}">Edit <span>Actor</span></h1></div>
+    <a href="/actors" class="btn btn-ghost">← Back</a>
+  </div>
+  <div class="card form-card"><div class="card-body">
+    <form th:if="${actor == null}" action="/actors/save" method="post">
+      <div class="form-group"><label>First Name *</label><input name="firstName" type="text" required placeholder="PENELOPE"/></div>
+      <div class="form-group"><label>Last Name *</label><input name="lastName" type="text" required placeholder="GUINESS"/></div>
+      <div class="form-actions"><button type="submit" class="btn btn-primary">Save Actor</button><a href="/actors" class="btn btn-ghost">Cancel</a></div>
+    </form>
+    <form th:if="${actor != null}" th:action="@{/actors/{id}/update(id=${actorId})}" method="post">
+      <div class="form-group"><label>First Name *</label><input name="firstName" type="text" th:value="${actor.firstName}" required/></div>
+      <div class="form-group"><label>Last Name *</label><input name="lastName" type="text" th:value="${actor.lastName}" required/></div>
+      <div class="form-actions"><button type="submit" class="btn btn-primary">Update Actor</button><a href="/actors" class="btn btn-ghost">Cancel</a></div>
+    </form>
+  </div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

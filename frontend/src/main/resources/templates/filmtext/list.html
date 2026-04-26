@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Film Texts — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Film Texts</span></h1><p>Film title &amp; description index</p></div>
+    <a href="/filmtexts/search" class="btn btn-ghost">Search</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>Film ID</th><th>Title</th><th>Description</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${filmtexts == null or filmtexts.isEmpty()}"><td colspan="4"><div class="empty-state"><p>No film texts.</p></div></td></tr>
+      <tr th:each="ft : ${filmtexts}">
+        <td th:text="${ft.filmId}"></td><td th:text="${ft.title}"></td>
+        <td><span th:text="${ft.description != null ? #strings.abbreviate(ft.description,80) : '—'}"></span></td>
+        <td><a class="action-btn view" th:href="@{/filmtexts/{id}(id=${ft.filmId})}">View</a>
+          <a class="action-btn edit" th:href="@{/filmtexts/{id}/edit(id=${ft.filmId})}">Edit</a></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/filmtexts', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

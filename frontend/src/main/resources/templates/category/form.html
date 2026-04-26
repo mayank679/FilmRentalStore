@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Category Form — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div class="page-header">
+    <div><h1 th:if="${category==null}">Add <span>Category</span></h1><h1 th:if="${category!=null}">Edit <span>Category</span></h1></div>
+    <a href="/categories" class="btn btn-ghost">← Back</a>
+  </div>
+  <div class="card form-card"><div class="card-body">
+    <form th:if="${category==null}" action="/categories/save" method="post">
+      <div class="form-group"><label>Name *</label><input name="name" type="text" required placeholder="Action"/></div>
+      <div class="form-actions"><button type="submit" class="btn btn-primary">Save</button><a href="/categories" class="btn btn-ghost">Cancel</a></div>
+    </form>
+    <form th:if="${category!=null}" th:action="@{/categories/{id}/update(id=${categoryId})}" method="post">
+      <div class="form-group"><label>Name *</label><input name="name" type="text" th:value="${category.name}" required/></div>
+      <div class="form-actions"><button type="submit" class="btn btn-primary">Update</button><a href="/categories" class="btn btn-ghost">Cancel</a></div>
+    </form>
+  </div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

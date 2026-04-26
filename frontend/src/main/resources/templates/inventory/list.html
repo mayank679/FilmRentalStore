@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Inventory — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Inventory</span></h1><p>All inventory items</p></div>
+    <a href="/inventory/create" class="btn btn-primary">+ Add Item</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/inventory}">
+    <div class="filter-field"><label>Film ID</label><input name="filmId" type="number" th:value="${filterFilmId}" placeholder="1"/></div>
+    <div class="filter-field"><label>Store ID</label><input name="storeId" type="number" th:value="${filterStoreId}" placeholder="1"/></div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="/inventory" class="btn btn-ghost">Clear</a>
+    </div>
+  </form>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Film ID</th><th>Store ID</th><th>Last Update</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${inventory == null or inventory.isEmpty()}"><td colspan="5"><div class="empty-state"><p>No inventory.</p></div></td></tr>
+      <tr th:each="i : ${inventory}">
+        <td th:text="${i.inventoryId}"></td><td th:text="${i.filmId}"></td>
+        <td th:text="${i.storeId}"></td><td th:text="${i.lastUpdate}"></td>
+        <td><div class="row-actions">
+          <a class="action-btn view" th:href="@{/inventory/{id}(id=${i.inventoryId})}">View</a>
+          <a class="action-btn edit" th:href="@{/inventory/{id}/edit(id=${i.inventoryId})}">Edit</a>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/inventory', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

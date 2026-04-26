@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Payments — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div><h1><span>Payments</span></h1><p>All payment records</p></div>
+    <div style="display:flex;gap:.5rem">
+      <a href="/payments/search" class="btn btn-ghost">Advanced Search</a>
+      <a href="/payments/create" class="btn btn-primary">+ New Payment</a>
+    </div>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/payments}">
+    <div class="filter-field"><label>Customer ID</label><input name="customerId" type="number" th:value="${filterCustomerId}" placeholder="1"/></div>
+    <div class="filter-field"><label>Staff ID</label><input name="staffId" type="number" th:value="${filterStaffId}" placeholder="1"/></div>
+    <div class="filter-field"><label>Rental ID</label><input name="rentalId" type="number" th:value="${filterRentalId}" placeholder="1"/></div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="/payments" class="btn btn-ghost">Clear</a>
+    </div>
+  </form>
+  <div class="card"><div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Customer ID</th><th>Staff ID</th><th>Rental ID</th><th>Amount</th><th>Payment Date</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr th:if="${payments == null or payments.isEmpty()}"><td colspan="7"><div class="empty-state"><p>No payments.</p></div></td></tr>
+      <tr th:each="p : ${payments}">
+        <td th:text="${p.paymentId}"></td><td th:text="${p.customerId}"></td><td th:text="${p.staffId}"></td>
+        <td th:text="${p.rentalId}"></td><td th:text="${p.amount}"></td><td th:text="${p.paymentDate}"></td>
+        <td><div class="row-actions">
+          <a class="action-btn view" th:href="@{/payments/{id}(id=${p.paymentId})}">View</a>
+          <a class="action-btn edit" th:href="@{/payments/{id}/edit(id=${p.paymentId})}">Edit</a>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+      <div th:replace="~{fragments/pagination :: pagination('/payments', ${currentPage}, ${totalPages})}"></div>
+</div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

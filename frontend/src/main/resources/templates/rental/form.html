@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Rental Form — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div class="page-header">
+    <div><h1 th:if="${rental==null}">New <span>Rental</span></h1><h1 th:if="${rental!=null}">Edit <span>Rental</span></h1></div>
+    <a href="/rentals" class="btn btn-ghost">← Back</a>
+  </div>
+  <div class="card form-card"><div class="card-body">
+    <form th:if="${rental==null}" action="/rentals/save" method="post">
+      <div class="form-group"><label>Inventory ID *</label><input name="inventoryId" type="number" required/>
+        <p class="hint"><a href="/inventory" style="color:var(--gold)">Browse inventory →</a></p></div>
+      <div class="form-group"><label>Customer ID *</label><input name="customerId" type="number" required/>
+        <p class="hint"><a href="/customers" style="color:var(--gold)">Browse customers →</a></p></div>
+      <div class="form-group"><label>Staff ID *</label><input name="staffId" type="number" required/>
+        <p class="hint"><a href="/staff" style="color:var(--gold)">Browse staff →</a></p></div>
+      <div class="form-group"><label>Rental Date</label><input name="rentalDate" type="datetime-local"/></div>
+      <div class="form-actions"><button type="submit" class="btn btn-primary">Save</button><a href="/rentals" class="btn btn-ghost">Cancel</a></div>
+    </form>
+    <form th:if="${rental!=null}" th:action="@{/rentals/{id}/update(id=${rentalId})}" method="post">
+      <div class="form-group"><label>Inventory ID *</label><input name="inventoryId" type="number" th:value="${rental.inventoryId}" required/></div>
+      <div class="form-group"><label>Customer ID *</label><input name="customerId" type="number" th:value="${rental.customerId}" required/></div>
+      <div class="form-group"><label>Staff ID *</label><input name="staffId" type="number" th:value="${rental.staffId}" required/></div>
+      <div class="form-group"><label>Return Date</label><input name="returnDate" type="datetime-local" th:value="${rental.returnDate}"/></div>
+      <div class="form-actions"><button type="submit" class="btn btn-primary">Update</button><a href="/rentals" class="btn btn-ghost">Cancel</a></div>
+    </form>
+  </div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

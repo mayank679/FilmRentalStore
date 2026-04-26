@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Patch Film — Film Rental</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <style>
+        .hint-patch { font-size:.75rem; color: var(--gold-dim); margin-top:.25rem; }
+        .patch-note { background:#1a1a00; border:1px solid #666600; color:#cccc00;
+            padding:.7rem 1rem; border-radius:6px; margin-bottom:1.2rem;
+            font-size:.85rem; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+    <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+    <div class="page-header">
+        <div><h1>Patch <span>Film</span> <small style="font-size:.7em;color:var(--gold-dim);">(Partial Update — PATCH)</small></h1></div>
+        <a th:href="@{/films/{id}(id=${filmId})}" class="btn btn-ghost">← Back</a>
+    </div>
+
+    <div th:if="${error}" style="color:red;background:#2a0000;border:1px solid #a00;padding:.8rem 1.2rem;border-radius:6px;margin-bottom:1rem;" th:text="${error}"></div>
+
+    <div class="patch-note">
+        ⚡ Only fill in the fields you want to change. Empty fields will be <strong>ignored</strong> and the existing value will be kept.
+    </div>
+
+    <div class="card form-card"><div class="card-body">
+        <form th:action="@{/films/{id}/patch(id=${filmId})}" method="post">
+
+            <div class="form-group">
+                <label>Title</label>
+                <input name="title" type="text" th:placeholder="${film.title}"/>
+                <p class="hint-patch">Current: <span th:text="${film.title}"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <input name="description" type="text" th:placeholder="${film.description}"/>
+                <p class="hint-patch">Current: <span th:text="${film.description}"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Release Year</label>
+                <input name="releaseYear" type="number" th:placeholder="${film.releaseYear}"/>
+                <p class="hint-patch">Current: <span th:text="${film.releaseYear}"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Language ID</label>
+                <input name="languageId" type="number" th:placeholder="${film['languageId']}"/>
+                <p class="hint-patch"><a href="/languages" style="color:var(--gold)">Browse languages →</a></p>
+            </div>
+
+            <div class="form-group">
+                <label>Rental Duration (days)</label>
+                <input name="rentalDuration" type="number" th:placeholder="${film.rentalDuration}"/>
+                <p class="hint-patch">Current: <span th:text="${film.rentalDuration}"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Rental Rate</label>
+                <input name="rentalRate" type="text" th:placeholder="${film.rentalRate}"/>
+                <p class="hint-patch">Current: <span th:text="${film.rentalRate}"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Length (minutes)</label>
+                <input name="length" type="number" th:placeholder="${film.length}"/>
+                <p class="hint-patch">Current: <span th:text="${film.length}"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Replacement Cost</label>
+                <input name="replacementCost" type="text" th:placeholder="${film.replacementCost}"/>
+                <p class="hint-patch">Current: <span th:text="${film.replacementCost}"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Rating</label>
+                <select name="rating">
+                    <option value="">— keep current (<span th:text="${film.rating}"></span>) —</option>
+                    <option th:each="r : ${'G,PG,PG-13,R,NC-17'.split(',')}"
+                            th:value="${r}" th:text="${r}"></option>
+                </select>
+                <p class="hint-patch">Current: <span th:text="${film.rating}"></span></p>
+            </div>
+
+            <div class="form-group">
+                <label>Special Features</label>
+                <input name="specialFeatures" type="text" th:placeholder="${film.specialFeatures}"/>
+                <p class="hint-patch">Current: <span th:text="${film.specialFeatures}"></span></p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Apply Patch (PATCH)</button>
+                <a th:href="@{/films/{id}(id=${filmId})}" class="btn btn-ghost">Cancel</a>
+            </div>
+        </form>
+    </div></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

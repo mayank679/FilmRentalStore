@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Search Cities — Film Rental</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+  <style>
+    .filter-field.locked input { opacity:.35; pointer-events:none; background:var(--surface); cursor:not-allowed; }
+    .filter-field.locked label { opacity:.4; }
+    .filter-field.active label { color:var(--gold); font-weight:500; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div th:replace="~{fragments/alert :: toasts}"></div>
+  <div class="page-header">
+    <div>
+      <h1>Search <span>Cities</span></h1>
+      <p th:if="${mode == null}">Select a search mode</p>
+      <p th:if="${mode == 'id'}">GET /api/cities/{id} — Find city by ID</p>
+      <p th:if="${mode == 'name'}">GET /api/cities/name/{name} — Search by name</p>
+      <p th:if="${mode == 'countryId'}">GET /api/cities/country/id/{countryId} — Get cities by country</p>
+    </div>
+    <a href="/cities" class="btn btn-ghost">← All Cities</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <form class="filter-panel" method="get" th:action="@{/cities/search}">
+    <input type="hidden" name="mode" th:value="${mode}"/>
+    <div th:class="${mode == 'id'} ? 'filter-field active' : 'filter-field locked'">
+      <label>City ID</label>
+      <input name="id" type="number" th:value="${searchId}" placeholder="1" th:readonly="${mode != 'id'}"/>
+    </div>
+    <div th:class="${mode == 'name'} ? 'filter-field active' : 'filter-field locked'">
+      <label>City Name</label>
+      <input name="name" type="text" th:value="${searchName}" placeholder="London" th:readonly="${mode != 'name'}"/>
+    </div>
+    <div th:class="${mode == 'countryId'} ? 'filter-field active' : 'filter-field locked'">
+      <label>Country ID</label>
+      <input name="countryId" type="number" th:value="${searchCountryId}" placeholder="44" th:readonly="${mode != 'countryId'}"/>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <a href="/cities" class="btn btn-ghost">← Cities</a>
+    </div>
+  </form>
+  <div class="card" th:if="${cities != null}">
+    <div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>City Name</th><th>Country ID</th><th>Last Update</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(cities)}"><td colspan="5"><div class="empty-state"><p>No results found.</p></div></td></tr>
+        <tr th:each="c : ${cities}">
+          <td th:text="${c.cityId}"></td><td th:text="${c.city}"></td><td th:text="${c.countryId}"></td><td th:text="${c.lastUpdate}"></td>
+          <td><div class="row-actions">
+            <a class="action-btn view" th:href="@{/cities/{id}(id=${c.cityId})}">View</a>
+            <a class="action-btn edit" th:href="@{/cities/{id}/edit(id=${c.cityId})}">Edit</a>
+          </div></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div th:replace="~{fragments/pagination :: pagination('/cities/search', ${currentPage}, ${totalPages})}"></div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>

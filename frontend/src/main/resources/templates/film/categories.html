@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head><meta charset="UTF-8"/><title>Film Categories — Film Rental</title>
+<link rel="stylesheet" th:href="@{/css/style.css}"/></head>
+<body>
+<nav class="navbar">
+  <a href="/members" class="navbar-brand"><img th:src="@{/img/logo.svg}" alt=""/><span>Film<em>Rental</em></span></a>
+  <a href="/members" style="font-size:.75rem;color:var(--gold-dim);text-decoration:none;padding:.3rem .8rem;border:1px solid var(--border);border-radius:5px;transition:color .2s;">&#128101; Team</a>
+</nav>
+<div class="page-wrapper">
+  <div class="page-header">
+    <div><h1>Film <span th:text="${filmId}">#</span> — Categories</h1><p>Categories for this film</p></div>
+    <a th:href="@{/films/{id}(id=${filmId})}" class="btn btn-ghost">← Back to Film</a>
+  </div>
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <div class="card" th:if="${filmWithCategories != null}">
+    <div class="card-header">
+      <strong th:text="${filmWithCategories['title']}">Film</strong>
+      <span class="badge" th:text="${filmWithCategories['rating']}"></span>
+    </div>
+    <div class="card-body">
+      <p style="color:var(--text-muted);margin-bottom:1rem" th:text="${filmWithCategories['description']}"></p>
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem">
+        <span class="badge" th:if="${filmWithCategories['categoryNames'] != null}" th:each="cat : ${filmWithCategories['categoryNames']}" th:text="${cat}"></span>
+        <em style="color:var(--text-muted)" th:if="${filmWithCategories['categoryNames'] == null}">No categories assigned.</em>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer"><span>Film Rental Store &copy; 2026</span></footer>
+</body></html>
