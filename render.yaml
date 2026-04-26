@@ -2,9 +2,10 @@ services:
   # Backend API Service
   - type: web
     name: film-rental-backend
-    runtime: docker
-    dockerContext: .
-    dockerfilePath: backend.Dockerfile
+    runtime: native
+    plan: free
+    buildCommand: "./mvnw clean install -DskipTests"
+    startCommand: "java -jar backend/target/Film_Rental_System-0.0.1-SNAPSHOT.jar"
     envVars:
       - key: PORT
         value: 8082
@@ -14,15 +15,14 @@ services:
         sync: false
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
-      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
-        value: update
 
   # Frontend UI Service
   - type: web
     name: film-rental-frontend
-    runtime: docker
-    dockerContext: .
-    dockerfilePath: frontend.Dockerfile
+    runtime: native
+    plan: free
+    buildCommand: "./mvnw clean install -DskipTests"
+    startCommand: "java -jar frontend/target/frontend-0.0.1-SNAPSHOT.jar"
     envVars:
       - key: PORT
         value: 8081
